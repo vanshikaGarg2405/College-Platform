@@ -1,18 +1,16 @@
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-
-type Params = {
-  params: Promise<{
-    id: string;
-  }>;
-};
+import { NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: Params
+  req: Request,
+  context: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
 ) {
   try {
-    const { id } = await params;
+    const { id } = await context.params;
 
     const college =
       await prisma.college.findUnique({
@@ -30,8 +28,10 @@ export async function GET(
 
     return NextResponse.json(college);
   } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
-      { error: "Failed to fetch college" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
