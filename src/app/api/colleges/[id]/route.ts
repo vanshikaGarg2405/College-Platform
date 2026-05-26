@@ -1,18 +1,25 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+type Params = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
 export async function GET(
-  req: Request,
-  context: { params: Promise<{ id: string }> }
+  request: Request,
+  { params }: Params
 ) {
   try {
-    const { id } = await context.params;
+    const { id } = await params;
 
-    const college = await prisma.college.findUnique({
-      where: {
-        id,
-      },
-    });
+    const college =
+      await prisma.college.findUnique({
+        where: {
+          id,
+        },
+      });
 
     if (!college) {
       return NextResponse.json(
